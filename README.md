@@ -83,6 +83,7 @@ grow automatically as the course adds more code. If CI is green, everything in t
 | `reference/module-01-linux/lesson-03-permissions/start_robot.sh` | 1.3 | Executable bringup script (chmod +x → ./) |
 | `reference/module-01-linux/lesson-04-editing/show_params.sh` | 1.4 | Hand-typed parameter script (nano/vim practice) |
 | `reference/module-01-linux/lesson-07-tmux-shell/radian_helpers.sh` | 1.7 | Shell aliases + `radian_help` (sourced from ~/.bashrc) |
+| `reference/module-01-linux/lesson-08-docker/docker-compose.yml` | 1.8 | Two-container talker/listener demo (validated in CI) |
 | `solutions/module-01-linux/module-01-project-environment-audit/check_env.sh` | Module 01 Project | Environment Audit Script solution |
 
 (Index grows as the course does.)

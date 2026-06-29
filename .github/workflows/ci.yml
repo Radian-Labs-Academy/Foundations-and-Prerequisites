@@ -82,6 +82,24 @@ jobs:
         shell: bash
         run: bash tests/run_all.sh
 
+  compose:
+    name: Docker Compose files (config validation)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate compose files
+        shell: bash
+        run: |
+          set -uo pipefail
+          mapfile -t files < <(find . -type f -name 'docker-compose*.yml' -not -path './.git/*')
+          if [ "${#files[@]}" -eq 0 ]; then echo "No compose files found — nothing to validate."; exit 0; fi
+          fail=0
+          for f in "${files[@]}"; do
+            echo "Validating $f"
+            docker compose -f "$f" config -q || fail=1
+          done
+          exit "$fail"
+
   ros2:
     name: ROS2 packages (colcon build)
     runs-on: ubuntu-latest

@@ -1,0 +1,23 @@
+# Lesson 1.8 — a two-container ROS2 talker/listener demo.
+# Copy into ~/radian_ws/practice/module-01/lesson-08/ and run:
+#   docker compose up      (Ctrl+C, then `docker compose down` to stop)
+#
+# Both containers share the host network so DDS discovery works between them.
+services:
+  talker:
+    image: ros:jazzy
+    container_name: lab_talker
+    network_mode: host
+    environment:
+      - ROS_DOMAIN_ID=0
+    command: bash -c "source /opt/ros/jazzy/setup.bash && ros2 run demo_nodes_cpp talker"
+
+  listener:
+    image: ros:jazzy
+    container_name: lab_listener
+    network_mode: host
+    environment:
+      - ROS_DOMAIN_ID=0
+    command: bash -c "source /opt/ros/jazzy/setup.bash && ros2 run demo_nodes_py listener"
+    depends_on:
+      - talker
