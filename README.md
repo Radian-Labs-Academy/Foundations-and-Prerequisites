@@ -85,6 +85,7 @@ grow automatically as the course adds more code. If CI is green, everything in t
 | `reference/module-01-linux/lesson-07-tmux-shell/radian_helpers.sh` | 1.7 | Shell aliases + `radian_help` (sourced from ~/.bashrc) |
 | `reference/module-01-linux/lesson-08-docker/docker-compose.yml` | 1.8 | Two-container talker/listener demo (validated in CI) |
 | `reference/module-01-linux/lesson-09-git/git_demo.sh` | 1.9 | Runnable add→commit→log workflow demo |
+| `src/radian_intro/` | 1.10 | First ROS2 package (C++ node, built by CI colcon job) |
 | `solutions/module-01-linux/module-01-project-environment-audit/check_env.sh` | Module 01 Project | Environment Audit Script solution |
 
 (Index grows as the course does.)
