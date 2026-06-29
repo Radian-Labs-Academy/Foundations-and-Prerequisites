@@ -105,6 +105,8 @@ CI rebuilds/retests each artifact on every push, so nothing the program depends 
 | `src/radian_intro/` | 1.10 | First ROS2 package (C++ node, built by CI colcon job) |
 | `docker/radian-amr-dev/Dockerfile` | 1.8 (TO DO) | Carry-forward dev image reused as the base in later courses |
 | `reference/module-02-cpp17/lesson-02-hello/robot_status.cpp` | 2.2 | First C++ program — formatted status printer |
+| `reference/module-02-cpp17/lesson-03-types/robot_state.cpp` | 2.3 | Typed robot state + encoder rollover |
+| `reference/module-02-cpp17/lesson-04-operators/diff_drive_kinematics.cpp` | 2.4 | Differential-drive kinematics math |
 | `solutions/module-01-linux/module-01-project-environment-audit/check_env.sh` | Module 01 Project | Environment Audit Script solution |
 
 (Index grows as the course does.)
