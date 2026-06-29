@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1090,SC1091  # assert.sh and the program under test are sourced via runtime paths
 # Verifies Lesson 1.7 helpers: radian_help prints the expected shortcuts.
 HERE="$(cd "$(dirname "$0")/../.." && pwd)"
-# shellcheck disable=SC1091
 source "$HERE/tests/lib/assert.sh"
 
 PROG="$HERE/reference/module-01-linux/lesson-07-tmux-shell/radian_helpers.sh"
