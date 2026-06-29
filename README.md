@@ -63,15 +63,32 @@ cd ~/radian-labs-foundations && git pull
 ## Continuous Verification (CI/CD)
 
 Every push and pull request runs **[`.github/workflows/ci.yml`](.github/workflows/ci.yml)**, which
-compiles and verifies **every program in the repo**:
+compiles AND runs **every program in the repo**, checking expected output:
 
-- **Shell** — `bash -n` (syntax) + `shellcheck` on every `*.sh`
+- **Shell** — `bash -n` + `shellcheck` on every `*.sh`
 - **Python** — `python -m py_compile` on every `*.py`
 - **C++** — `g++ -std=c++17 -Wall -Wextra` on every standalone `*.cpp`/`*.cc`
-- **ROS2** — `colcon build` + `colcon test` on any package under `src/` (auto-enables once packages exist)
+- **Execute** — runs every `tests/**/test_*.sh`, asserting each program's expected output
+- **Compose** — `docker compose config` on every `docker-compose*.yml`
+- **Image** — `docker build` of `radian-amr-dev`
+- **ROS2** — `colcon build` of every package under `src/` in a `ros:jazzy` container
 
 Each job discovers files of its kind and skips cleanly when there are none yet, so the checks
-grow automatically as the course adds more code. If CI is green, everything in the repo builds.
+grow automatically as the course adds more code. If CI is green, everything in the repo builds
+and runs as expected.
+
+---
+
+## Carry-Forward Artifacts
+
+This repo isn't just teaching snippets — each concept is taught properly, and the hands-on
+**"TO DO"** prepares a **reusable artifact** that later courses actually consume, e.g.:
+
+- **`docker/radian-amr-dev/`** — the dev image (ROS2 + tooling). Later courses build `FROM radian-amr-dev`.
+- **`src/radian_intro/`** — the first ROS2 package; later packages join it under `src/`.
+- **`reference/.../radian_helpers.sh`** — the shell environment every course assumes.
+
+CI rebuilds/retests each artifact on every push, so nothing the program depends on can silently rot.
 
 ---
 
@@ -86,6 +103,7 @@ grow automatically as the course adds more code. If CI is green, everything in t
 | `reference/module-01-linux/lesson-08-docker/docker-compose.yml` | 1.8 | Two-container talker/listener demo (validated in CI) |
 | `reference/module-01-linux/lesson-09-git/git_demo.sh` | 1.9 | Runnable add→commit→log workflow demo |
 | `src/radian_intro/` | 1.10 | First ROS2 package (C++ node, built by CI colcon job) |
+| `docker/radian-amr-dev/Dockerfile` | 1.8 (TO DO) | Carry-forward dev image reused as the base in later courses |
 | `solutions/module-01-linux/module-01-project-environment-audit/check_env.sh` | Module 01 Project | Environment Audit Script solution |
 
 (Index grows as the course does.)

@@ -100,6 +100,22 @@ jobs:
           done
           exit "$fail"
 
+  image:
+    name: radian-amr-dev image (docker build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the carry-forward dev image
+        shell: bash
+        run: |
+          set -uo pipefail
+          DF=docker/radian-amr-dev/Dockerfile
+          if [ ! -f "$DF" ]; then
+            echo "No radian-amr-dev Dockerfile yet — nothing to build."
+            exit 0
+          fi
+          docker build -f "$DF" -t radian-amr-dev .
+
   ros2:
     name: ROS2 packages (colcon build)
     runs-on: ubuntu-latest
