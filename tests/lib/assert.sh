@@ -29,6 +29,10 @@ assert_status() {
   if [ "$1" -eq "$2" ]; then _ok "$3"; else _bad "$3 (expected exit $2, got $1)"; fi
 }
 
+# compile_cpp <src.cpp> <out_binary> — compile a standalone C++17 program with
+# the course's standard flags. Returns g++'s exit code so a test can assert it.
+compile_cpp() { g++ -std=c++17 -Wall -Wextra -O2 -o "$2" "$1"; }
+
 # Call at the end of every test file; sets the file's exit status.
 finish() {
   if [ "$_assert_fail" -eq 0 ]; then

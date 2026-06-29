@@ -104,6 +104,7 @@ CI rebuilds/retests each artifact on every push, so nothing the program depends 
 | `reference/module-01-linux/lesson-09-git/git_demo.sh` | 1.9 | Runnable add→commit→log workflow demo |
 | `src/radian_intro/` | 1.10 | First ROS2 package (C++ node, built by CI colcon job) |
 | `docker/radian-amr-dev/Dockerfile` | 1.8 (TO DO) | Carry-forward dev image reused as the base in later courses |
+| `reference/module-02-cpp17/lesson-02-hello/robot_status.cpp` | 2.2 | First C++ program — formatted status printer |
 | `solutions/module-01-linux/module-01-project-environment-audit/check_env.sh` | Module 01 Project | Environment Audit Script solution |
 
 (Index grows as the course does.)
