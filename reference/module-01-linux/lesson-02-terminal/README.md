@@ -17,6 +17,6 @@ Verify your copy matches the reference:
 
 ```bash
 diff ~/radian_ws/practice/module-01/lesson-02/hello_radian.sh \
-     ~/radian-labs-foundations/practice/module-01-linux/lesson-02-terminal/hello_radian.sh
+     ~/radian-labs-foundations/reference/module-01-linux/lesson-02-terminal/hello_radian.sh
 # no output = identical
 ```

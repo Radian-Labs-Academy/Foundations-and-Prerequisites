@@ -1,0 +1,102 @@
+name: Verify Programs
+
+# Compile and verify every program in the repo on every push and PR.
+# Each job discovers files of its kind and skips cleanly when there are none yet,
+# so the matrix grows naturally as the course adds shell, Python, C++, and ROS2 code.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  shell:
+    name: Shell scripts (bash -n + shellcheck)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: Verify all *.sh
+        shell: bash
+        run: |
+          set -uo pipefail
+          mapfile -t files < <(find . -type f -name '*.sh' -not -path './.git/*')
+          if [ "${#files[@]}" -eq 0 ]; then echo "No shell scripts found — nothing to verify."; exit 0; fi
+          fail=0
+          for f in "${files[@]}"; do
+            echo "::group::$f"
+            bash -n "$f" || { echo "syntax error in $f"; fail=1; }
+            shellcheck --severity=warning "$f" || fail=1
+            echo "::endgroup::"
+          done
+          exit "$fail"
+
+  python:
+    name: Python (py_compile)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile all *.py
+        shell: bash
+        run: |
+          set -uo pipefail
+          mapfile -t files < <(find . -type f -name '*.py' -not -path './.git/*')
+          if [ "${#files[@]}" -eq 0 ]; then echo "No Python files found — nothing to verify."; exit 0; fi
+          python -m py_compile "${files[@]}"
+          echo "All Python files compiled cleanly."
+
+  cpp:
+    name: C++ (g++ -std=c++17)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install g++
+        run: sudo apt-get update && sudo apt-get install -y g++
+      - name: Compile all standalone *.cpp / *.cc
+        shell: bash
+        run: |
+          set -uo pipefail
+          # ROS2 package sources under src/ are built by the ros2 job (colcon), not here.
+          mapfile -t files < <(find . -type f \( -name '*.cpp' -o -name '*.cc' \) \
+                                  -not -path './.git/*' -not -path './src/*')
+          if [ "${#files[@]}" -eq 0 ]; then echo "No standalone C++ files found — nothing to verify."; exit 0; fi
+          fail=0
+          for f in "${files[@]}"; do
+            echo "Compiling $f"
+            g++ -std=c++17 -Wall -Wextra -fsyntax-only "$f" || fail=1
+          done
+          exit "$fail"
+
+  ros2:
+    name: ROS2 packages (colcon build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect ROS2 packages
+        id: detect
+        shell: bash
+        run: |
+          if find src -name package.xml 2>/dev/null | grep -q .; then
+            echo "has_pkgs=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_pkgs=false" >> "$GITHUB_OUTPUT"
+            echo "No ROS2 packages under src/ yet — skipping colcon build."
+          fi
+      # Real ROS2 build turns on automatically once src/ gains radian_* packages
+      # (Lesson 1.10+). Runs inside the official ROS2 Jazzy image.
+      - name: colcon build + test
+        if: steps.detect.outputs.has_pkgs == 'true'
+        uses: addnab/docker-run-action@v3
+        with:
+          image: ros:jazzy
+          options: -v ${{ github.workspace }}:/ws -w /ws
+          run: |
+            apt-get update && rosdep update
+            rosdep install --from-paths src --ignore-src -y
+            . /opt/ros/jazzy/setup.sh
+            colcon build
+            colcon test && colcon test-result --verbose
