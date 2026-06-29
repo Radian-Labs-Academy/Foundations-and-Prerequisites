@@ -103,12 +103,12 @@ jobs:
   ros2:
     name: ROS2 packages (colcon build)
     runs-on: ubuntu-latest
-    # Runs every step inside the official ROS2 Jazzy image. The build only does
-    # real work once src/ contains a package.xml (Lesson 1.10+), otherwise skips.
-    container: ros:jazzy
     steps:
       - uses: actions/checkout@v4
-      - name: colcon build
+      # Build inside the official ROS2 Jazzy image via `docker run` (checkout
+      # stays on the host, which has Node for the action). Only does real work
+      # once src/ contains a package.xml (Lesson 1.10+), otherwise skips.
+      - name: colcon build in ros:jazzy
         shell: bash
         run: |
           set -uo pipefail
@@ -116,7 +116,10 @@ jobs:
             echo "No ROS2 packages under src/ yet — nothing to build."
             exit 0
           fi
-          apt-get update -qq
-          apt-get install -y -qq python3-colcon-common-extensions
-          . /opt/ros/jazzy/setup.sh
-          colcon build --event-handlers console_direct+
+          docker run --rm -v "$PWD":/ws -w /ws ros:jazzy bash -c '
+            set -e
+            apt-get update -qq
+            apt-get install -y -qq python3-colcon-common-extensions
+            . /opt/ros/jazzy/setup.sh
+            colcon build --event-handlers console_direct+
+          '
